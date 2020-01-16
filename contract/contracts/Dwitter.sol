@@ -53,4 +53,28 @@ contract Dwitter {
     function getUser(address _wallet) public view returns (User memory) {
         return users[usernames[_wallet]];
     }
+
+    function postTweet(string memory _content) public {
+        require(
+            bytes(usernames[msg.sender]).length > 0,
+            "You must sign up to post a tweet."
+        );
+        require(
+            bytes(_content).length > 0,
+            "You must write something to post a tweet."
+        );
+        require(bytes(_content).length <= 140, "Your tweet is too long.");
+
+        Tweet memory tweet = Tweet({
+            author: msg.sender,
+            content: _content,
+            timestamp: block.timestamp,
+            likes: 0
+        });
+        tweets.push(tweet);
+    }
+
+    function getTweets() public view returns (Tweet[] memory) {
+        return tweets;
+    }
 }
