@@ -1,5 +1,5 @@
 import Dwitter from './Dwitter.json';
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 
 const ContractABI = Dwitter.abi;
@@ -12,10 +12,17 @@ const getDwitterContract = () => {
   return new ethers.Contract(ContractAddress, ContractABI, signer);
 };
 
-const useDwitter = () => {
-  // const DwitterContract = getDwitterContract();
+type User = {
+  wallet: string;
+  username: string;
+  name: string;
+  bio: string;
+  avatar: string;
+};
 
+const useDwitter = () => {
   const [currentAccount, setCurrentAccount] = useState<string>('');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   // connect to wallet
   const connect = async () => {
@@ -48,7 +55,33 @@ const useDwitter = () => {
     connect();
   }, []);
 
-  return { connect, account: currentAccount };
+  useEffect(() => {
+    if (currentAccount) {
+      getUser();
+    }
+  }, [currentAccount]);
+
+  const getUser = async () => {
+    const contract = getDwitterContract();
+    const user = await contract.getUser(currentAccount);
+    const { wallet, username, name, bio, avatar } = user;
+    setCurrentUser({ wallet, username, name, bio, avatar });
+
+    return currentUser;
+  };
+
+  const createUser = async (
+    username: string,
+    name: string,
+    bio: string,
+    avatar: string
+  ) => {
+    const contract = getDwitterContract();
+    const user = await contract.signup(username, name, bio, avatar);
+    getUser();
+  };
+
+  return { connect, account: currentAccount, user: currentUser, createUser };
 };
 
 export default useDwitter;
