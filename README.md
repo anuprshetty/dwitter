@@ -10,8 +10,10 @@ Decentralized Twitter
 - npx hardhat compile
 - npx hardhat test
 - npx hardhat node
+- npx hardhat run scripts/deploy.js --network localhost
 
 ### dapp subproject
 
 - npm install
 - npm run dev
+- yarn add ethers
