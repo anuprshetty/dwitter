@@ -1,6 +1,6 @@
 # Dwitter
 
-Decentralized Twitter
+A decentralized Twitter.
 
 ## Commands
 
